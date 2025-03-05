@@ -1,0 +1,33 @@
+import telebot
+import random
+
+bot = telebot.TeleBot('7924629477:AAHSz8J5mA1GjTEykL4NjeW8Ib8gaAO_pcs')
+num = 0;
+rand = 0
+
+@bot.message_handler(content_types=['text'])
+def Start(message):
+    global  rand
+    rand = random.randint(0, 100)
+    bot.send_message(message.from_user.id, "Попробуй угадать число")
+    bot.send_message(message.from_user.id, "Введи число от 1 до 100")
+    bot.register_next_step_handler(message, Chislo)
+def Chislo(message):
+    global num
+    global prevNum
+    try:
+        val = int(message.text)
+    except ValueError:
+        bot.send_message(message.from_user.id, "ты дура??? ")
+        bot.register_next_step_handler(message, Chislo)
+        return
+    num = int(message.text)
+    if num == rand:
+        bot.send_message(message.from_user.id, "Угадал лакерное чудище")
+    elif num > rand:
+        bot.send_message(message.from_user.id, "Высоко берешь человеческое отродье")
+        bot.register_next_step_handler(message, Chislo)
+    else:
+        bot.send_message(message.from_user.id, "Мало мешок с костями")
+        bot.register_next_step_handler(message, Chislo)
+bot.polling(none_stop=True, interval=0)
